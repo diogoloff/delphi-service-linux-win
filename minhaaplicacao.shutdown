@@ -1,0 +1,31 @@
+#!/bin/bash
+
+SERVICO=/opt/meuapp/ServicoLinux
+
+aguarda_parar() {
+    if [ "$2" -ne 0 ]; then
+        return 1
+    fi
+
+    RET=1
+    for i in $(seq 1 30); do
+		if ! pidof $SERVICO > /dev/null; then
+			echo "ServicoLinux Parado"
+            RET=0
+            break
+        fi
+        sleep 1s
+    done
+    return $RET
+}
+
+if pidof $SERVICO > /dev/null; then
+	echo "Parando ServicoLinux..."
+    kill -15 $(pidof $SERVICO) &
+	aguarda_parar 0 $?
+fi
+
+if pidof $SERVICO > /dev/null; then
+    echo "*** ServicoLinux Travado ***"
+	kill -9 $(pidof $SERVICO)
+fi

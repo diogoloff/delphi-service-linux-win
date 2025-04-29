@@ -1,0 +1,15 @@
+[Unit]
+Description=Serviço Meu Aplicativo. (ServicoLinux)
+After=syslog.target network.target
+
+[Service]
+User=root
+Group=root
+Type=notify
+WorkingDirectory=/opt/meuapp
+ExecStart=/opt/meuapp/ServicoLinux
+#ExecStop=/bin/kill -USR1 $MAINPID
+#KillMode=none
+
+[Install]
+WantedBy=multi-user.target

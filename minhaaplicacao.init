@@ -1,0 +1,38 @@
+#!/bin/bash
+set -em
+
+SERVICO=/opt/meuapp/ServicoLinux
+
+# Esta variavel serve para verificar se este serviço precisa realmente iniciar corretamente
+# se setado como 1 o mesmo será obrigatorio e se não subir o container será encerrado se
+# estiver na inicialização.
+OBRIGATORIO=0
+
+runDir=/run
+makeLogoDir $runDir
+pidfile="$runDir/ServicoLinux.pid"
+
+aguarda_iniciar() {
+    if [ "$1" -ne 0 ]; then
+        return 1
+    fi
+
+	RET=1
+	for i in $(seq 1 30); do
+		if [ -f "$pidfile" ]; then
+			echo "ServicoLinux Iniciado"
+			RET=0
+			break
+		fi
+		sleep 1s
+	done
+    return $RET
+}
+
+if pidof $SERVICO > /dev/null; then
+	exit 0
+fi
+
+echo "Iniciando ServicoLinux ..."
+$SERVICO &
+aguarda_iniciar $?
